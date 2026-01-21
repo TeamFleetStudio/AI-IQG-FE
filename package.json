@@ -2,6 +2,10 @@
   "name": "interview-question-generator",
   "version": "1.0.0",
   "description": "A simple interview question generator application",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -3,9 +3,16 @@ const { createServer } = require('http')
 const { parse } = require('url')
 const next = require('next')
 
+// Disable Next.js telemetry
+process.env.NEXT_TELEMETRY_DISABLED = '1'
+
 const dev = process.env.NODE_ENV !== 'production'
 const hostname = process.env.HOSTNAME || '0.0.0.0'
-const port = process.env.PORT || 3000
+// Ensure port is a number, default to 3000 (not 80)
+const port = parseInt(process.env.PORT || '3000', 10)
+
+// Log configuration for debugging
+console.log(`Starting server with hostname: ${hostname}, port: ${port}, NODE_ENV: ${process.env.NODE_ENV || 'development'}`)
 
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()

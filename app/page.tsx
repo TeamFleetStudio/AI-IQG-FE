@@ -80,12 +80,12 @@ export default function Home() {
       if (jobDescription) formData.append('job_description', jobDescription)
       formData.append('num_questions_per_category', '5')
 
-      // For development, we'll try the API endpoint
-      // In production, you'll need to handle JWT authentication
-      const response = await fetch('http://localhost:5000/api/interview-questions/generate', {
+      // Use deployed backend API
+      const apiUrl = 'https://iqg-api.fsgarage.in'
+      const response = await fetch(`${apiUrl}/api/interview-questions/generate`, {
         method: 'POST',
         body: formData,
-        // Note: In production, add Authorization header with JWT token
+        // Note: In production, add Authorization header with JWT token if needed
         // headers: {
         //   'Authorization': `Bearer ${token}`
         // }

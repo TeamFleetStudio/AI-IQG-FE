@@ -80,8 +80,8 @@ export default function Home() {
       if (jobDescription) formData.append('job_description', jobDescription)
       formData.append('num_questions_per_category', '5')
 
-      // Use deployed backend API (configurable via environment variable)
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://iqg-api.fsgarage.in'
+      // Use backend API (localhost for development, configurable via environment variable)
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
       const response = await fetch(`${apiUrl}/api/interview-questions/generate`, {
         method: 'POST',
         body: formData,
@@ -143,20 +143,48 @@ export default function Home() {
   const copyAllQuestions = () => {
     if (!questionData?.questions) return
     
-    const allQuestions: string[] = []
-    Object.values(questionData.questions).forEach(category => {
-      if (Array.isArray(category)) {
+    const copiedText: string[] = []
+    let questionNumber = 1
+    
+    // Define the exact order to match the UI and PDF
+    const categoryOrder: Array<{ key: 'technical' | 'behavioral' | 'situational' | 'gap_probing' | 'role_specific', title: string }> = [
+      { key: 'technical', title: 'Technical Questions' },
+      { key: 'behavioral', title: 'Behavioral Questions' },
+      { key: 'situational', title: 'Situational Questions' },
+      { key: 'gap_probing', title: 'Gap Probing Questions' },
+      { key: 'role_specific', title: 'Role-Specific Questions' }
+    ]
+    
+    // Iterate through categories in the defined order
+    categoryOrder.forEach(({ key, title }) => {
+      const category = questionData.questions?.[key]
+      if (category && Array.isArray(category) && category.length > 0) {
+        // Add category header
+        copiedText.push(`${title}:`)
+        copiedText.push('')
+        
+        // Add questions in order
         category.forEach((item) => {
+          let questionText = ''
           if (typeof item === 'string') {
-            allQuestions.push(item)
+            questionText = item
           } else if (item && typeof item === 'object' && 'question' in item) {
-            allQuestions.push(item.question)
+            questionText = item.question
+          }
+          
+          if (questionText) {
+            copiedText.push(`${questionNumber}. ${questionText}`)
+            questionNumber++
           }
         })
+        
+        // Add spacing between categories
+        copiedText.push('')
       }
     })
     
-    navigator.clipboard.writeText(allQuestions.join('\n\n'))
+    const finalText = copiedText.join('\n')
+    navigator.clipboard.writeText(finalText)
     alert('All questions copied to clipboard!')
   }
 
@@ -164,8 +192,20 @@ export default function Home() {
     if (!questionData?.questions) return []
     
     const allQuestions: string[] = []
-    Object.values(questionData.questions).forEach(category => {
-      if (Array.isArray(category)) {
+    
+    // Define the exact order to match the UI and PDF
+    const categoryOrder: Array<'technical' | 'behavioral' | 'situational' | 'gap_probing' | 'role_specific'> = [
+      'technical',
+      'behavioral',
+      'situational',
+      'gap_probing',
+      'role_specific'
+    ]
+    
+    // Iterate through categories in the defined order
+    categoryOrder.forEach((key) => {
+      const category = questionData.questions?.[key]
+      if (category && Array.isArray(category)) {
         category.forEach((item) => {
           if (typeof item === 'string') {
             allQuestions.push(item)
@@ -175,6 +215,7 @@ export default function Home() {
         })
       }
     })
+    
     return allQuestions
   }
 

@@ -80,8 +80,8 @@ export default function Home() {
       if (jobDescription) formData.append('job_description', jobDescription)
       formData.append('num_questions_per_category', '5')
 
-      // Use backend API (localhost for development, configurable via environment variable)
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+      // Use deployed backend API (configurable via environment variable)
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://iqg-api.fsgarage.in'
       const response = await fetch(`${apiUrl}/api/interview-questions/generate`, {
         method: 'POST',
         body: formData,
